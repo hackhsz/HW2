@@ -1,3 +1,9 @@
+from flask import Flask,request
+import requests
+from bs4 import BeautifulSoup
+import pdb
+from flask import render_template
+
 ## HW 2 
 ## SI 364 F17
 ## Due: September 24, 2017
@@ -18,9 +24,52 @@ app.debug = True
 def hello_to_you():
     return 'Hello!'
 
+@app.route('/question',methods = ['POST','GET'])
+def ques_me():
+    s = """<!DOCTYPE html>
+<html>
+<body>
 
-if __name__ == '__main__':
-    app.run()
+<form action="http://localhost:5000/result" method="GET">
+  What is your favourite number:<br>
+  <input type="number" name="num" value="3">
+  <br>
+  What are correct about Zhong in the following options? :<br>                                                 
+  <input type="checkbox" name="v1" value="Dalton"> He drove the Dalton Highway
+alone in Alaska<br>                                                             
+  <input type="checkbox" name="v2" value="Fun"> He tried sky-diving<br>         
+  <input type="checkbox" name="v3" value="Ha"> He lost 30 pounds in 2 months</br>                                                                              
+  <input type="checkbox" name="v4" value="Fs"> His favourite brand is addidas</br>                                                                             
+  <input type="checkbox" name="v5" value="Ru"> He likes Ruby over Python</br>   
+  <input type="checkbox" name="v6" value="Tr"> He volunteered at an earthquake
+site</br> 
+  <input type="submit" value="Submit">
+</form>
+</body>
+</html>"""
+
+    return s
+
+@app.route('/result',methods = ['POST','GET'])
+        
+def result():
+    if request.method=='GET':
+        #data = request.form.to_dict()
+        result = request.args
+        number = result.get('num')
+        newnumber = int(number)+int(number)
+        j=0
+
+        for i in range(1,6):
+            if result.get("v"+str(i)):
+                j+=1
+        corr  = j/6.0
+        return render_template('temp.html',newnumber=newnumber,corr=corr)
+        #return 'Your correction rate about Zhong is %s' % j
+        
+#        return 'Double your favourite number is %s' % newnumber % "What the fuck this this" % number
+
+
 
 
 ## [PROBLEM 2]
@@ -32,13 +81,9 @@ if __name__ == '__main__':
 # You should feel free to be creative and do something fun for you -- 
 # And use this opportunity to make sure you understand these steps: if you think going slowly and carefully writing out steps for a simpler data transaction, like Problem 1, will help build your understanding, you should definitely try that!
 
-# You can assume that a user will give you the type of input/response you expect in your form; you do not need to handle errors or user confusion. (e.g. if your form asks for a name, you can assume a user will type a reasonable name; if your form asks for a number, you can assume a user will type a reasonable number; if your form asks the user to select a checkbox, you can assume they will do that.)
 
 
+#Questionaire made in code above, Enjoy
 
-
-
-
-
-
-
+if __name__ == '__main__':
+    app.run()
